@@ -1,49 +1,127 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - Live Code Editor</title>
+    <title>Live Code Editor</title>
     <style>
         body {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            height: 100vh;
             font-family: 'Times New Roman', serif;
             background: grey;
             color: white;
             margin: 0;
-            text-align: center;
+            padding: 20px;
         }
-        h1 {
-            font-size: 3rem;
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
             text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
         }
-        p {
-            font-size: 1.2rem;
+        .container {
+            display: flex;
+            width: 90%;
+            justify-content: space-between;
+            gap: 15px;
             margin-bottom: 20px;
         }
-        a {
-            text-decoration: none;
-            background: black;
-            color: white;
-            padding: 15px 30px;
-            font-size: 1.5rem;
-            border-radius: 6px;
-            transition: background 0.3s, transform 0.2s;
+        textarea {
+            width: 32%;
+            height: 180px;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            resize: none;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            font-family: 'Times New Roman', serif;
+        }
+        iframe {
+            width: 90%;
+            height: 450px;
+            border: 3px solid white;
+            background: white;
+            border-radius: 10px;
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
         }
-        a:hover {
-            background:grey;
+        .download-container {
+            margin-top: 20px;
+        }
+        button {
+            background: black;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background 0.3s, transform 0.2s;
+            box-shadow: black;
+            margin: 8px;
+        }
+        button:hover {
+            background: #e64a19;
             transform: scale(1.05);
         }
     </style>
 </head>
 <body>
-    <h1>Welcome to Live Code Editor</h1>
-    <p>Click below to start coding in the Live Code Editor.</p>
-    <a href="/dashboard.html">Go to Editor</a>
+    <h2>Live Code Editor</h2>
+    <div class="container">
+        <textarea id="htmlCode" placeholder="HTML"></textarea>
+        <textarea id="cssCode" placeholder="CSS"></textarea>
+        <textarea id="jsCode" placeholder="JavaScript"></textarea>
+    </div>
+    <button onclick="updateOutput()">Show Output</button>
+    <iframe id="output"></iframe>
+    
+    <div class="download-container">
+        <button onclick="downloadCode()">Download HTML</button>
+    </div>
+    
+    <script>
+        function updateOutput() {
+            const html = document.getElementById("htmlCode").value;
+            const css = document.getElementById("cssCode").value;
+            const js = document.getElementById("jsCode").value;
+            const iframe = document.getElementById("output").contentWindow.document;
+            
+            const fullCode = `<!DOCTYPE html>
+            <html>
+            <head>
+            <style>${css}</style>
+            </head>
+            <body>
+            ${html}
+            <script>
+            ${js}
+            <\/script>
+            </body>
+            </html>`;
+            
+            iframe.open();
+            iframe.write(fullCode);
+            iframe.close();
+        }
+
+        function downloadCode() {
+            const html = document.getElementById("htmlCode").value;
+            const css = `<style>${document.getElementById("cssCode").value}</style>`;
+            const js = document.getElementById("jsCode").value;
+            const fullCode = `<!DOCTYPE html><html><head>${css}</head><body>${html}<script>${js}<\/script></body></html>`;
+            const blob = new Blob([fullCode], { type: "text/html" });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "code.html";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    </script>
 </body>
 </html>
